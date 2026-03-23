@@ -14,6 +14,16 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     wallet = relationship("Wallet", back_populates="user", uselist=False)
+    sent_transactions = relationship(
+        "Transaction",
+        foreign_keys="Transaction.sender_id",
+        back_populates="sender"
+    )
+    received_transactions = relationship(
+        "Transaction",
+        foreign_keys="Transaction.receiver_id",
+        back_populates="receiver"
+    )
 
 
 class Wallet(Base):
@@ -35,3 +45,14 @@ class Transaction(Base):
     transaction_type = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    sender = relationship(
+        "User",
+        foreign_keys=[sender_id],
+        back_populates="sent_transactions"
+    )
+    receiver = relationship(
+        "User",
+        foreign_keys=[receiver_id],
+        back_populates="received_transactions"
+    )

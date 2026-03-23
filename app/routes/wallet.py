@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -20,7 +20,7 @@ def get_wallet(
     return wallet
 
 
-@router.post("/deposit")
+@router.post("/deposit", status_code=status.HTTP_200_OK)
 def deposit_money(
     request: DepositRequest,
     current_user: User = Depends(get_current_user),
@@ -30,7 +30,7 @@ def deposit_money(
     if not wallet:
         raise HTTPException(status_code=404, detail="Wallet not found")
 
-    wallet.balance += request.amount
+    wallet.balance = round(wallet.balance + request.amount, 2)
 
     transaction = Transaction(
         sender_id=None,
@@ -49,7 +49,7 @@ def deposit_money(
     }
 
 
-@router.post("/transfer")
+@router.post("/transfer", status_code=status.HTTP_200_OK)
 def transfer_money(
     request: TransferRequest,
     current_user: User = Depends(get_current_user),
@@ -76,8 +76,8 @@ def transfer_money(
         raise HTTPException(status_code=400, detail="Insufficient funds")
 
     try:
-        sender_wallet.balance -= request.amount
-        recipient_wallet.balance += request.amount
+        sender_wallet.balance = round(sender_wallet.balance - request.amount, 2)
+        recipient_wallet.balance = round(recipient_wallet.balance + request.amount, 2)
 
         transaction = Transaction(
             sender_id=current_user.id,

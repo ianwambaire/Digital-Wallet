@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserCreate(BaseModel):
@@ -38,10 +38,20 @@ class WalletResponse(BaseModel):
 class DepositRequest(BaseModel):
     amount: float = Field(gt=0)
 
+    @field_validator("amount")
+    @classmethod
+    def round_amount(cls, value: float) -> float:
+        return round(value, 2)
+
 
 class TransferRequest(BaseModel):
     recipient_email: EmailStr
     amount: float = Field(gt=0)
+
+    @field_validator("amount")
+    @classmethod
+    def round_amount(cls, value: float) -> float:
+        return round(value, 2)
 
 
 class TransactionResponse(BaseModel):

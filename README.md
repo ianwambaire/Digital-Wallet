@@ -33,6 +33,11 @@ source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 
+## Run with Docker
+
+```bash
+docker compose up --build
+
 API Docs
 
 http://127.0.0.1:8000/docs

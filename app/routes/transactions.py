@@ -19,4 +19,24 @@ def get_transactions(
         (Transaction.receiver_id == current_user.id)
     ).order_by(Transaction.created_at.desc()).all()
 
-    return transactions
+    results = []
+    for transaction in transactions:
+        sender = transaction.sender
+        receiver = transaction.receiver
+
+        results.append(
+            TransactionResponse(
+                id=transaction.id,
+                sender_id=transaction.sender_id,
+                receiver_id=transaction.receiver_id,
+                sender_name=sender.name if sender else None,
+                receiver_name=receiver.name if receiver else None,
+                sender_email=sender.email if sender else None,
+                receiver_email=receiver.email if receiver else None,
+                transaction_type=transaction.transaction_type,
+                amount=transaction.amount,
+                created_at=transaction.created_at,
+            )
+        )
+
+    return results

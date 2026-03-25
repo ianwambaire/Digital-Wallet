@@ -58,6 +58,10 @@ class TransactionResponse(BaseModel):
     id: int
     sender_id: int | None
     receiver_id: int | None
+    sender_name: str | None = None
+    receiver_name: str | None = None
+    sender_email: str | None = None
+    receiver_email: str | None = None
     transaction_type: str
     amount: float
     created_at: datetime

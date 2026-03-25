@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -11,7 +11,7 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     wallet = relationship("Wallet", back_populates="user", uselist=False)
     sent_transactions = relationship(
@@ -44,7 +44,7 @@ class Transaction(Base):
     receiver_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     transaction_type = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     sender = relationship(
         "User",
